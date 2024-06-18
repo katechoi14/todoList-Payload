@@ -1,2 +1,0 @@
-import { getPayload } from '../../../../payload';
-

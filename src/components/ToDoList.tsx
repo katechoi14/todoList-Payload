@@ -19,6 +19,17 @@ const TodoList: React.FC = () => {
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const response = await axios.get("/api/tasks");
+        setTasks(response.data);
+      } catch (e) {
+        console.error("Error fetching tasks:", e);
+      }
+    };
+  });
   function addTask(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
@@ -28,7 +39,7 @@ const TodoList: React.FC = () => {
     }
 
     const newT: Task = {
-      id: new Date().getTime(),
+      id: new Date().getTime().toString(),
       text: newTask,
       completed: false,
       userName: userName,
