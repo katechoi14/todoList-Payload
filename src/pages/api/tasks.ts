@@ -1,6 +1,7 @@
 import axios from 'axios';
+import { NextApiRequest, NextApiResponse } from 'next';
 
-export default async function handler(req, res) {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const API_URL = 'http://localhost:3000/api/tasks';
     try {
         if (req.method === "GET") {
@@ -22,3 +23,5 @@ export default async function handler(req, res) {
             res.status(500).json({ error: "Internal Server Error"});
         }
     };
+
+    export default handler;
