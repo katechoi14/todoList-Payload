@@ -23,14 +23,15 @@ const TodoList: React.FC = () => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await axios.get("/api/tasks");
+        const response = await axios.get('/api/tasks');
         setTasks(response.data);
       } catch (e) {
         console.error("Error fetching tasks:", e);
       }
     };
-  });
-  function addTask(e: React.FormEvent<HTMLFormElement>) {
+    fetchTasks();
+  }, []);
+  const addTask = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (newTask.trim() === "") {
@@ -46,7 +47,7 @@ const TodoList: React.FC = () => {
       date: selectedDate,
     };
     try {
-      const response = await axios.post("/api/tasks", newT);
+      const response = await axios.post('/api/tasks', newT);
       setTasks([...tasks, newT]);
       setNewTask("");
       setUserName("");
