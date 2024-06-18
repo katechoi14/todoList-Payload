@@ -45,37 +45,55 @@ const TodoList: React.FC = () => {
       userName: userName,
       date: selectedDate,
     };
-
-    setTasks([...tasks, newT]);
-    setNewTask("");
-    setUserName("");
-    setSelectedDate(null);
-  }
-
-  const deleteTask = (index: number) => {
-    const updatedTasks = tasks.filter((_, i) => i !== index);
-    setTasks(updatedTasks);
+    try {
+      const response = await axios.post("/api/tasks", newT);
+      setTasks([...tasks, newT]);
+      setNewTask("");
+      setUserName("");
+      setSelectedDate(null);
+    } catch (e) {
+      console.error("Cannot add task!", e);
+    }
   };
 
-  const toggleTask = (index: number) => {
+  const deleteTask = async (index: number) => {
+    const taskToDelete = tasks[index];
+    try {
+      await axios.delete(`/api/tasks/${taskToDelete.id}`);
+      const updatedTasks = tasks.filter((_, i) => i !== index);
+      setTasks(updatedTasks);
+    } catch (e) {
+      console.error("Cannot delete task!");
+    }
+  };
+
+  const toggleTask = async (index: number) => {
     const updatedTasks = [...tasks];
     const toggledTask = updatedTasks[index];
     toggledTask.completed = !toggledTask.completed;
-
-    if (toggledTask.completed) {
-      updatedTasks.splice(index, 1);
-      updatedTasks.unshift(toggledTask);
+    try {
+      await axios.put(`/api/tasks/${toggledTask.id}`, toggledTask);
+      if (toggledTask.completed) {
+        updatedTasks.splice(index, 1);
+        updatedTasks.unshift(toggledTask);
+      }
+      setTasks(updatedTasks);
+    } catch (e) {
+      console.error("Cannot toggle task!");
     }
-
-    setTasks(updatedTasks);
   };
 
-  const editTask = (index: number, newText: string | null) => {
+  const editTask = async (index: number, newText: string | null) => {
     const updatedTasks = [...tasks];
     if (newText) {
       updatedTasks[index].text = newText;
+      try {
+        await axios.put(`/api/tasks/${updatedTasks[index].id}`, updatedTasks[index]);
+        setTasks(updatedTasks);
+      } catch (e) {
+        console.error("Cannot edit task!");
+      }
     }
-    setTasks(updatedTasks);
   };
 
   const handleDragStart = (e: React.DragEvent<HTMLLIElement>, index: number) => {
