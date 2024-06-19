@@ -12,14 +12,8 @@ const Todos = {
             required: true,
         },
         {
-            name: 'CompletionDate',
+            name: 'date',
             type: 'date',
-        },
-        {
-            name: 'status',
-            type: 'select',
-            options: ['pending', 'completed'],
-            defaultValue: 'pending',
         },
     ]
 };
