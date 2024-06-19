@@ -25,8 +25,8 @@ const TodoList: React.FC = () => {
       try {
         const response = await axios.get('/api/tasks');
         setTasks(response.data);
-      } catch (e) {
-        console.error("Error fetching tasks:", e);
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
       }
     };
     fetchTasks();
@@ -48,51 +48,48 @@ const TodoList: React.FC = () => {
     };
     try {
       const response = await axios.post('/api/tasks', newT);
-      setTasks([...tasks, newT]);
+      setTasks([...tasks, response.data]);
       setNewTask("");
       setUserName("");
       setSelectedDate(null);
-    } catch (e) {
-      console.error("Cannot add task!", e);
+    } catch (error) {
+      console.error("Cannot add task!", error);
     }
   };
 
-  const deleteTask = async (index: number) => {
-    const taskToDelete = tasks[index];
+  const deleteTask = async (id: string) => {
     try {
-      await axios.delete(`/api/tasks/${taskToDelete.id}`);
-      const updatedTasks = tasks.filter((_, i) => i !== index);
-      setTasks(updatedTasks);
-    } catch (e) {
-      console.error("Cannot delete task!");
+      await axios.delete(`/api/tasks/${id}`);
+      setTasks(tasks.filter(task => task.id !== id));
+    } catch (error) {
+      console.error("Cannot delete task!", error);
     }
   };
 
-  const toggleTask = async (index: number) => {
-    const updatedTasks = [...tasks];
-    const toggledTask = updatedTasks[index];
-    toggledTask.completed = !toggledTask.completed;
+  const toggleTask = async (id: string) => {
     try {
-      await axios.put(`/api/tasks/${toggledTask.id}`, toggledTask);
-      if (toggledTask.completed) {
-        updatedTasks.splice(index, 1);
-        updatedTasks.unshift(toggledTask);
+      const task = tasks.find(task => task.id === id);
+      if (task) {
+        task.completed = !task.completed;
+        await axios.put(`/api/tasks/${id}`, task);
+        setTasks(tasks.map(t => (t.id === id ? task : t)));
       }
-      setTasks(updatedTasks);
-    } catch (e) {
-      console.error("Cannot toggle task!");
+    } catch (error) {
+      console.error("Cannot toggle task!", error);
     }
   };
 
-  const editTask = async (index: number, newText: string | null) => {
-    const updatedTasks = [...tasks];
+  const editTask = async (id: string, newText: string | null) => {
     if (newText) {
-      updatedTasks[index].text = newText;
-      try {
-        await axios.put(`/api/tasks/${updatedTasks[index].id}`, updatedTasks[index]);
-        setTasks(updatedTasks);
-      } catch (e) {
-        console.error("Cannot edit task!");
+      const task = tasks.find(task => task.id === id);
+      if (task) {
+        task.text = newText;
+        try {
+          await axios.put(`/api/tasks/${id}`, task);
+          setTasks(tasks.map(t => (t.id === id ? task : t)));
+        } catch (error) {
+          console.error("Cannot edit task!", error);
+        }
       }
     }
   };
@@ -194,7 +191,7 @@ const TodoList: React.FC = () => {
     >
       <span
         className="toggle-indicator cursor-pointer"
-        onClick={() => toggleTask(index)}
+        onClick={() => toggleTask(task.id)}
       >
         ☰
       </span>
@@ -203,7 +200,7 @@ const TodoList: React.FC = () => {
         suppressContentEditableWarning
         onBlur={(e) => {
           if (!task.completed) {
-            editTask(index, e.target.textContent);
+            editTask(task.id, e.target.textContent);
           }
         }}
         className="flex-1 taskText break-all"
@@ -217,13 +214,13 @@ const TodoList: React.FC = () => {
         <p>{task.date ? task.date.toLocaleDateString() : ""}</p>
       </div>
       <div className="flex-1">
-        <button onClick={() => deleteTask(index)} 
+        <button onClick={() => deleteTask(task.id)} 
         className="text-base bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
           delete
         </button>
       </div>
       <div className="flex-0">
-        <button onClick={() => toggleTask(index)} 
+        <button onClick={() => toggleTask(task.id)} 
         className="text-base bg-white hover:bg-gray-200 text-black font-semibold py-2 px-4 border border-gray-200 rounded shadow">
           {task.completed ? "Undo" : "Done?"}
         </button>
