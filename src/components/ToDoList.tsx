@@ -19,7 +19,6 @@ const TodoList: React.FC = () => {
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
-
   useEffect(() => {
     const fetchTasks = async () => {
       try {
@@ -31,6 +30,7 @@ const TodoList: React.FC = () => {
     };
     fetchTasks();
   }, []);
+
   const addTask = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -46,6 +46,7 @@ const TodoList: React.FC = () => {
       userName: userName,
       date: selectedDate,
     };
+
     try {
       const response = await axios.post('/api/tasks', newT);
       setTasks([...tasks, response.data]);
@@ -176,62 +177,60 @@ const TodoList: React.FC = () => {
           </div>
         </form>
       </div>
-  <ul className="list-none p-0 w-full max-w-full">
-  {tasks.map((task, index) => (
-    <li
-      key={task.id}
-      className={`flex items-center border-b border-gray-200 py-3 ${task.completed ? "line-through text-gray-400" : ""} 
-      ${draggedIndex === index ? "opacity-50" : ""}
-      ${dragOverIndex === index ? "border-dashed border-2 border-black" : ""}`}
-      draggable
-      onDragStart={(e) => handleDragStart(e, index)}
-      onDragOver={(e) => handleDragOver(e, index)}
-      onDrop={(e) => handleDrop(e, index)}
-      onDragEnd={handleDragEnd}
-    >
-      <span
-        className="toggle-indicator cursor-pointer"
-        onClick={() => toggleTask(task.id)}
-      >
-        ☰
-      </span>
-      <span
-        contentEditable={!task.completed}
-        suppressContentEditableWarning
-        onBlur={(e) => {
-          if (!task.completed) {
-            editTask(task.id, e.target.textContent);
-          }
-        }}
-        className="flex-1 taskText break-all"
-      >
-        {task.text}
-      </span>
-      <div className="userName flex-1 border-l border-gray-200 pl-3">
-        <p>{task.userName}</p>
-      </div>
-      <div className="Date border-l border-gray-200 pl-3">
-        <p>{task.date ? task.date.toLocaleDateString() : ""}</p>
-      </div>
-      <div className="flex-1">
-        <button onClick={() => deleteTask(task.id)} 
-        className="text-base bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
-          delete
-        </button>
-      </div>
-      <div className="flex-0">
-        <button onClick={() => toggleTask(task.id)} 
-        className="text-base bg-white hover:bg-gray-200 text-black font-semibold py-2 px-4 border border-gray-200 rounded shadow">
-          {task.completed ? "Undo" : "Done?"}
-        </button>
-      </div>
-    </li>
-  ))}
-</ul>
-</div>
-
+      <ul className="list-none p-0 w-full max-w-full">
+        {tasks.map((task, index) => (
+          <li
+            key={task.id}
+            className={`flex items-center border-b border-gray-200 py-3 ${task.completed ? "line-through text-gray-400" : ""} 
+            ${draggedIndex === index ? "opacity-50" : ""}
+            ${dragOverIndex === index ? "border-dashed border-2 border-black" : ""}`}
+            draggable
+            onDragStart={(e) => handleDragStart(e, index)}
+            onDragOver={(e) => handleDragOver(e, index)}
+            onDrop={(e) => handleDrop(e, index)}
+            onDragEnd={handleDragEnd}
+          >
+            <span
+              className="toggle-indicator cursor-pointer"
+              onClick={() => toggleTask(task.id)}
+            >
+              ☰
+            </span>
+            <span
+              contentEditable={!task.completed}
+              suppressContentEditableWarning
+              onBlur={(e) => {
+                if (!task.completed) {
+                  editTask(task.id, e.target.textContent);
+                }
+              }}
+              className="flex-1 taskText break-all"
+            >
+              {task.text}
+            </span>
+            <div className="userName flex-1 border-l border-gray-200 pl-3">
+              <p>{task.userName}</p>
+            </div>
+            <div className="Date border-l border-gray-200 pl-3">
+              <p>{task.date ? task.date.toLocaleDateString() : ""}</p>
+            </div>
+            <div className="flex-1">
+              <button onClick={() => deleteTask(task.id)} 
+              className="text-base bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+                delete
+              </button>
+            </div>
+            <div className="flex-0">
+              <button onClick={() => toggleTask(task.id)} 
+              className="text-base bg-white hover:bg-gray-200 text-black font-semibold py-2 px-4 border border-gray-200 rounded shadow">
+                {task.completed ? "Undo" : "Done?"}
+              </button>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
-  
 }
 
 export default TodoList;
