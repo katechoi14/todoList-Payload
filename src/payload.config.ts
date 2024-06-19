@@ -1,5 +1,8 @@
 import { buildConfig } from 'payload/config';
-import Todos from './collections/Todo';
+import { BaseDatabaseAdapter } from 'payload/dist/database/types';
+import Todos from './collections/Todo'
+
+type DatabaseAdapter = (args: { payload: Payload}) => BaseDatabaseAdapter;
 
 export default buildConfig({
     serverURL: 'http://localhost:3001',

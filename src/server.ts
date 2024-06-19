@@ -1,16 +1,20 @@
-import express from 'express';
-import payload from 'payload';
+import express from 'express'
+import payload from 'payload'
 
-require('dotenv').config();
+require('dotenv').config()
+const app = express()
 
-const app = express();
+const start = async () => {
+  await payload.init({
+    secret: process.env.PAYLOAD_SECRET,
+    express: app,
+  })
 
-payload.init({
-  secret: process.env.PAYLOAD_SECRET,
-  mongoURL: process.env.MONGODB_URI,
-  express: app,
-});
+  app.listen(3000, async () => {
+    console.log(
+      "Express is now listening for incoming connections on port 3000."
+    )
+  })
+}
 
-app.listen(3001, () => {
-  console.log('Payload CMS server is running on http://localhost:3001');
-});
+start()
