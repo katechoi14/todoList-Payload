@@ -1,4 +1,6 @@
-const Todos = {
+import { CollectionConfig } from 'payload/types';
+
+const Todos: CollectionConfig = {
     slug: 'todos',
     fields: [
         {
@@ -15,7 +17,11 @@ const Todos = {
             name: 'date',
             type: 'date',
         },
-    ]
+        {
+            name: 'completed',
+            type: 'checkbox',
+        },
+    ],
 };
 
 export default Todos;
